@@ -1,5 +1,6 @@
+// 파일명: Scene.js
+
 function resetGame() {
-    // 불필요하게 세이브를 다시 불러오던 코드 제거 (새 게임 초기화 목적에 맞게 변경)
     currentMaxTurns = MAX_TURNS;
     gameState.turns = currentMaxTurns; 
     gameState.stage = 1;
@@ -7,14 +8,14 @@ function resetGame() {
     gameState.inventory = { baekma: 0, soongsil: 0, shung: 1, bongsa: 3, tulip: 1 };
     gameState.history = [];
     gameState.gameWon = false;
-    gameState.activeView = "map"; // 인게임 진입
+    gameState.activeView = "map"; 
     gameState.isExploring = false;
     gameState.explorationTimer = 0;
     gameState.pendingBuildingId = null;
     gameState.winStreak = 0;
     
-    updateDOMVisibility();
-    saveGameProgress(); // 완전히 리셋된 상태를 새로 세이브에 기록
+    if (typeof updateDOMVisibility === 'function') updateDOMVisibility();
+    saveGameProgress(); 
 }
 
 function nextStage() {
@@ -26,15 +27,32 @@ function nextStage() {
     gameState.history = []; 
     gameState.activeView = "map";
     gameState.isExploring = false;
-    updateDOMVisibility();
+    if (typeof updateDOMVisibility === 'function') updateDOMVisibility();
     saveGameProgress();
 }
 
 function updateDOMVisibility() {
   if (gameState.activeView === "phone") {
     if (inputField && submitBtn) { inputField.show(); submitBtn.show(); }
-  } else {
+    if (typeof tutorialInput !== 'undefined' && tutorialInput) { tutorialInput.hide(); tutorialSubmitBtn.hide(); }
+  } 
+  // 💡 연습모드 진입 시점이 5페이지(인덱스 4)로 변경되었습니다.
+  else if (gameState.activeView === "tutorial" && gameState.tutorialStep === 4) {
     if (inputField && submitBtn) { inputField.hide(); submitBtn.hide(); }
+    
+    let boxW = 680, boxH = 600;
+    let boxX = width / 2 - boxW / 2, boxY = height / 2 - boxH / 2;
+    
+    if (typeof tutorialInput !== 'undefined' && tutorialInput) {
+      tutorialInput.position(boxX + boxW/2 - 100, boxY + boxH - 140);
+      tutorialSubmitBtn.position(boxX + boxW/2 + 35, boxY + boxH - 140);
+      tutorialInput.show();
+      tutorialSubmitBtn.show();
+    }
+  } 
+  else {
+    if (inputField && submitBtn) { inputField.hide(); submitBtn.hide(); }
+    if (typeof tutorialInput !== 'undefined' && tutorialInput) { tutorialInput.hide(); tutorialSubmitBtn.hide(); }
   }
 }
 
@@ -97,7 +115,7 @@ function drawGameWinOverlay() {
   fill(255); rect(width / 2 - boxW/2, height / 2 - boxH/2, boxW, boxH, 15);
   fill(50); textAlign(CENTER, CENTER);
   
-  updateDOMVisibility(); 
+  if (typeof updateDOMVisibility === 'function') updateDOMVisibility(); 
   if (gameState.stage < 2) {
     textSize(24); text(`Stage ${gameState.stage} 성공!`, width / 2, height / 2 - 40);
     textSize(18); fill(0, 150, 50);

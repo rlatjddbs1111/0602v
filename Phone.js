@@ -1,5 +1,6 @@
+// 파일명: Phone.js
+
 function drawPhoneScreen() {
-  // 수집 현황 박스가 훨씬 커졌으므로 위치를 왼쪽으로 넉넉히 이동 (width - 200)
   drawCollectionBox(width - 200, 80);
   
   let pW = UI_CONFIG.PHONE.w;
@@ -17,18 +18,17 @@ function drawPhoneScreen() {
   fill(255); textAlign(LEFT, TOP); 
   let histY = pY + 60;
   
-  // 더 큼직하게 보이도록 최근 10개만 렌더링
   let displayHistory = gameState.history.slice(-10);
   for (let entry of displayHistory) {
-    fill(255); textSize(18); textAlign(LEFT, TOP); // 글자 크기도 16 -> 18로 확대
-    text(`${entry.guess} - `, pX + 25, histY + 6); // 수직 정렬을 위해 오프셋 조정
+    fill(255); textSize(18); textAlign(LEFT, TOP); 
+    text(`${entry.guess} - `, pX + 25, histY + 6); 
     
     let iconX = pX + 90;
     for (let i = 0; i < 2; i++) {
       let currentHint = entry.hint[i];
       
       if (currentHint === "?") {
-        fill(255); textSize(28); text("?", iconX, histY); // 물음표 크기도 확대
+        fill(255); textSize(28); text("?", iconX, histY); 
       } else {
         let matchedConfig = HINT_CONFIG[currentHint];
         
@@ -39,7 +39,6 @@ function drawPhoneScreen() {
         }
         
         if (matchedConfig && matchedConfig.img) {
-          // 💡 힌트 내역 이미지 크기 28x28 -> 32x32로 확대
           image(matchedConfig.img, iconX, histY - 4, 32, 32);
         } else if (matchedConfig) {
           fill(255); textSize(28); 
@@ -48,47 +47,64 @@ function drawPhoneScreen() {
           fill(255); textSize(28); text("✨", iconX, histY); 
         }
       }
-      iconX += 40; // 큼직해진 만큼 가로 간격 34 -> 40으로 확대
+      iconX += 40; 
     }
-    histY += 38; // 세로 줄 간격 32 -> 38로 확대
+    histY += 38; 
   }
 }
 
 function handlePhoneClick(mx, my) {
+  // 인게임 ? 버튼 감지
+  let helpCx = width - 200 + 150; 
+  let helpCy = 80 + 26;           
+  
+  if (dist(mx, my, helpCx, helpCy) < 15) {
+    gameState.previousView = gameState.activeView; 
+    gameState.activeView = "tutorial";
+    gameState.tutorialStep = 0;
+    gameState.tutorialHistory = []; 
+    if (typeof updateDOMVisibility === 'function') updateDOMVisibility();
+    return; 
+  }
+
   let pX = width/2 - UI_CONFIG.PHONE.w/2;
   let pY = UI_CONFIG.PHONE.y;
   
   if (mx > pX && mx < pX + UI_CONFIG.PHONE.w && my > pY && my < pY + 40) {
     gameState.activeView = "map"; 
-    updateDOMVisibility(); 
+    if (typeof updateDOMVisibility === 'function') updateDOMVisibility(); 
   }
 }
 
 function drawCollectionBox(x, y) {
   push(); translate(x, y);
   fill(255); stroke(200); strokeWeight(1);
-  // 💡 박스 크기 대폭 확장 (140x240 -> 180x280)
   rect(0, 0, 180, 280, 10); 
-  noStroke(); fill(50); textSize(22); textAlign(CENTER, TOP); // 제목 텍스트 크기 확대
-  text("수집 현황", 90, 15); // 제목 위치 중앙(90)으로 맞춤
+  noStroke(); fill(50); textSize(22); textAlign(CENTER, TOP); 
+  text("수집 현황", 90, 15); 
   
+  // 도움말 진입 버튼 그리기
+  fill(50, 150, 250);
+  circle(150, 26, 24); 
+  fill(255); textSize(16); textAlign(CENTER, CENTER);
+  text("?", 150, 26);    
+
   textAlign(LEFT, CENTER);
-  let y_off = 60; // 시작 높이 낮춤
+  let y_off = 60; 
   
   for (let k in HINT_CONFIG) {
     if (k === "jinri") continue; 
     let item = HINT_CONFIG[k];
     
     if (item.img) {
-      // 💡 수집 현황 이미지 크기 대폭 확대 (26x26 -> 36x36)
       image(item.img, 20, y_off - 18, 36, 36);
-      fill(50); textSize(20); // 텍스트 크기 16 -> 20
-      text(`${item.name}: ${gameState.inventory[k]}`, 65, y_off); // 텍스트를 오른쪽으로 밀어줌
+      fill(50); textSize(20); 
+      text(`${item.name}: ${gameState.inventory[k]}`, 65, y_off); 
     } else {
       fill(50); textSize(20);
       text(`${item.icon} ${item.name}: ${gameState.inventory[k]}`, 20, y_off);
     }
-    y_off += 45; // 줄 간격 35 -> 45로 확대
+    y_off += 45; 
   }
   pop();
 }

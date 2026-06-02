@@ -1,28 +1,30 @@
-/* 숭실 단어 탐험 v0.2.4 - 이미지 전면 교체 버전 */
+// 파일명: sketch.js
+
 const MAX_TURNS = 30; 
 let currentMaxTurns = MAX_TURNS;
 
 let inputField, submitBtn;
+let tutorialInput, tutorialSubmitBtn; 
 
-// 1. 모든 이미지 변수 선언
-let imgJinri, imgBaekma, imgSoongsil, imgShung, imgBongsa, imgTulip;
+let imgJinri, imgShung, imgMap;
+let imgBaekma, imgSoongsil, imgBongsa, imgTulip; 
 
 function preload() {
-  // 2. 파일명에 맞게 이미지 로드 (없는 파일은 주석 처리해도 무방합니다)
   imgJinri = loadImage('ImgJinri.png');
   imgShung = loadImage('ImgShung.png');
+  imgMap = loadImage('MapBg.jpg'); 
+  
+  // 💡 주석 완벽 해제! (이미지 파일명과 대소문자가 정확한지 꼭 확인하세요)
   imgBaekma = loadImage('ImgBaekma.png');
   imgSoongsil = loadImage('ImgSoongsil.png');
   imgBongsa = loadImage('ImgBongsa.png');
   imgTulip = loadImage('ImgTulip.png');
-
-  imgMap = loadImage('MapBg.jpg');
 }
 
 function checkGameOverCondition() {
   if (gameState.turns <= 0 && !gameState.gameWon){
     gameState.activeView = "gameOver"; 
-    updateDOMVisibility();
+    if (typeof updateDOMVisibility === 'function') updateDOMVisibility();
   }
 }
 
@@ -38,7 +40,13 @@ function setup() {
   submitBtn.position(width/2 + 70, 580);
   submitBtn.mousePressed(guessWordAction);
 
-  // 3. 로드된 이미지를 HINT_CONFIG에 안전하게 연결
+  tutorialInput = createInput();
+  tutorialInput.size(120, 24); 
+  tutorialSubmitBtn = createButton("연습 제출");
+  tutorialSubmitBtn.size(80, 30);
+  tutorialSubmitBtn.mousePressed(tutorialGuessAction);
+
+  // 로드된 이미지들을 HINT_CONFIG에 연결
   if (imgJinri) HINT_CONFIG.jinri.img = imgJinri;
   if (imgShung) HINT_CONFIG.shung.img = imgShung;
   if (imgBaekma) HINT_CONFIG.baekma.img = imgBaekma;
@@ -48,7 +56,7 @@ function setup() {
   
   loadGameProgress();
   gameState.activeView = "title"; 
-  updateDOMVisibility();
+  if (typeof updateDOMVisibility === 'function') updateDOMVisibility();
 }
 
 function draw() {
@@ -59,6 +67,7 @@ function draw() {
     case "map": drawMapScreen(); break;
     case "phone": drawPhoneScreen(); break;
     case "title": drawTitleScreen(); break;
+    case "tutorial": drawTutorialScreen(); break; 
     case "gameOver": drawGameOverOverlay(); break;
     case "gameWin": drawGameWinOverlay(); break;
   }
@@ -89,10 +98,12 @@ function drawGlobalHeader() {
 
 function mousePressed() {
   if (gameState.isExploring) return; 
+
   switch(gameState.activeView) {
     case "title": handleTitleClick(mouseX, mouseY); break;
     case "map": handleMapClick(mouseX, mouseY); break;
     case "phone": handlePhoneClick(mouseX, mouseY); break;
+    case "tutorial": handleTutorialClick(mouseX, mouseY); break; 
     case "gameWin": handleWinClick(mouseX, mouseY); break;
     case "gameOver": handleGameOverClick(mouseX, mouseY); break;
   }
@@ -104,21 +115,19 @@ function keyPressed() {
     let pos = gameState.explorationBarPos; 
     let tStart = gameState.explorationTargetStart;
     let tW = gameState.explorationTargetWidth;
-    let tCenter = tStart + tW / 2;
-    let diff = Math.abs(pos - tCenter);
     
     let accuracy = 0;
-    if (diff <= tW / 2) {
-      accuracy = 1 - (diff / (tW / 2));
+    
+    if (pos >= tStart && pos <= tStart + tW) {
+      accuracy = 1.0; // 타깃 명중
     } else {
-      let outerLimit = tW * 1.1;
-      if (diff <= outerLimit) {
-        accuracy = 0.4 * (1 - (diff - tW / 2) / (outerLimit - tW / 2));
-      }
+      accuracy = 0;   // 타깃 빗나감
     }
     
     gameState.explorationResult = accuracy;
     gameState.isExploring = false;
     executeExploreLogic(gameState.pendingBuildingId, accuracy);
+    
+    return false; // 스페이스바 스크롤 방지
   }
 }

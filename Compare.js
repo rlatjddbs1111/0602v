@@ -1,4 +1,5 @@
-// 설정값을 깔끔하게 정리 (이미지는 sketch.js의 setup에서 주입됨)
+// 파일명: Compare.js
+
 const HINT_CONFIG = {
   jinri:    { name: "진리", icon: "✨" }, 
   baekma:   { name: "백마", icon: "🐴" },
@@ -90,9 +91,8 @@ function applyGuessResult(guess, hint_types) {
     } else {
       if (gameState.inventory[type] > 0) {
         gameState.inventory[type] -= 1;
-        final_hint_icons.push(type); // 아이콘 대신 key 저장
+        final_hint_icons.push(type); 
       } 
-      // 백마/숭실 자리에 아이템이 없을 때 봉사로 하위 호환!
       else if ((type === "baekma" || type === "soongsil") && gameState.inventory["bongsa"] > 0) {
         gameState.inventory["bongsa"] -= 1;
         final_hint_icons.push("bongsa"); 
@@ -109,4 +109,38 @@ function applyGuessResult(guess, hint_types) {
   if (inputField) inputField.value("");
   if (typeof checkGameOverCondition === 'function') checkGameOverCondition();
   saveGameProgress(); 
+}
+
+// 💡 무제한 연습 모드 처리 함수
+function tutorialGuessAction() {
+  if (!tutorialInput) return;
+  let val = tutorialInput.value().trim();
+
+  if (val.length !== 2) {
+    showInGamePopup("정확히 2글자를 입력해주세요!");
+    tutorialInput.value("");
+    return;
+  }
+
+  for (let ch of val) {
+    if (!(ch >= '가' && ch <= '힣')) {
+      showInGamePopup("올바른 완성형 한글을 입력해주세요!");
+      tutorialInput.value("");
+      return;
+    }
+  }
+
+  // 무조건 정답을 '진리'로 고정하여 테스트
+  let hint_types = calculateHints(val, "진리");
+  
+  if (hint_types) {
+    let final_hint_icons = [];
+    for (let type of hint_types) {
+      if (type === "jinri") final_hint_icons.push("jinri");
+      else final_hint_icons.push(type); 
+    }
+    gameState.tutorialHistory.push({ guess: val, hint: final_hint_icons });
+  }
+
+  tutorialInput.value("");
 }
