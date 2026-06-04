@@ -3,30 +3,30 @@
 const BUILDING_DROP_MIN = 0.1;
 const BUILDING_DROP_MAX = 1.0;
 
-// 💡 1티어, 2티어, 특수 구역으로 체계화된 드랍 테이블 및 이미지 경로 추가
+// 💡 올려주신 최종 로그 데이터를 반영하여 x, y, w 값 완벽 업데이트 완료!
 let buildings = [
   // 🌟 [1티어 구역] 주요 랜드마크: 백마, 숭실 (밸런스를 위해 봉사도 섞음)
-  { id: 1, name: "진리관", imgPath: "assets/b_jinri.png", img: null, x: 0.49, y: 0.25, w: 0.07, h: 0.15, dropItems: ["baekma", "soongsil", "bongsa"] },
-  { id: 6, name: "안익태", imgPath: "assets/b_ahn.png", img: null, x: 0.15, y: 0.7, w: 0.12, h: 0.1, dropItems: ["baekma", "soongsil", "bongsa"] },
-  { id: 10, name: "조만식", imgPath: "assets/b_cho.png", img: null, x: 0.57, y: 0.24, w: 0.1, h: 0.1, dropItems: ["baekma", "soongsil", "bongsa"] },
-  { id: 14, name: "문화관", imgPath: "assets/b_culture.png", img: null, x: 0.03, y: 0.67, w: 0.05, h: 0.16, dropItems: ["baekma", "soongsil", "bongsa"] },
+  { id: 1, name: "진리관", imgPath: "assets/b_jinri.png", img: null, x: 0.443, y: 0.144, w: 0.126, h: 0.15, dropItems: ["baekma", "soongsil", "bongsa"] },
+  { id: 6, name: "안익태", imgPath: "assets/b_ahn.png", img: null, x: 0.142, y: 0.734, w: 0.146, h: 0.1, dropItems: ["baekma", "soongsil", "bongsa"] },
+  { id: 10, name: "조만식", imgPath: "assets/b_cho.png", img: null, x: 0.579, y: 0.144, w: 0.127, h: 0.1, dropItems: ["baekma", "soongsil", "bongsa"] },
+  { id: 14, name: "문화관", imgPath: "assets/b_culture.png", img: null, x: 0.013, y: 0.681, w: 0.124, h: 0.16, dropItems: ["baekma", "soongsil", "bongsa"] },
 
   // 🤝 [2티어 구역] 일반 강의동 및 시설: 가장 많이 소모되는 봉사 중심, 그리고 슝슝
-  { id: 2, name: "한경직", imgPath: "assets/b_han.png", img: null, x: 0.52, y: 0.55, w: 0.1, h: 0.2, dropItems: ["bongsa", "shung"] },
-  { id: 4, name: "베어드", imgPath: "assets/b_baird.png", img: null, x: 0.3, y: 0.45, w: 0.15, h: 0.14, dropItems: ["bongsa", "shung"] },
-  { id: 5, name: "형남공", imgPath: "assets/b_hyungnam.png", img: null, x: 0.3, y: 0.6, w: 0.15, h: 0.14, dropItems: ["bongsa", "shung"] },
-  { id: 8, name: "미래관", imgPath: "assets/b_mirae.png", img: null, x: 0.67, y: 0.55, w: 0.1, h: 0.1, dropItems: ["bongsa", "shung"] },
-  { id: 9, name: "중앙도서관", imgPath: "assets/b_library.png", img: null, x: 0.69, y: 0.32, w: 0.08, h: 0.16, dropItems: ["bongsa", "shung"] },
-  { id: 11, name: "전산관", imgPath: "assets/b_computer.png", img: null, x: 0.8, y: 0.55, w: 0.17, h: 0.1, dropItems: ["bongsa", "shung"] },
-  { id: 12, name: "정보섬", imgPath: "assets/b_infosum.png", img: null, x: 0.77, y: 0.76, w: 0.17, h: 0.2, dropItems: ["bongsa", "shung"] },
-  { id: 13, name: "경상관", imgPath: "assets/b_kyungsang.png", img: null, x: 0.07, y: 0.53, w: 0.15, h: 0.12, dropItems: ["bongsa", "shung"] },
+  { id: 2, name: "한경직", imgPath: "assets/b_han.png", img: null, x: 0.480, y: 0.538, w: 0.163, h: 0.2, dropItems: ["bongsa", "shung"] },
+  { id: 4, name: "베어드", imgPath: "assets/b_baird.png", img: null, x: 0.302, y: 0.465, w: 0.150, h: 0.14, dropItems: ["bongsa", "shung"] },
+  { id: 5, name: "형남공", imgPath: "assets/b_hyungnam.png", img: null, x: 0.292, y: 0.627, w: 0.182, h: 0.14, dropItems: ["bongsa", "shung"] },
+  { id: 8, name: "미래관", imgPath: "assets/b_mirae.png", img: null, x: 0.652, y: 0.539, w: 0.155, h: 0.1, dropItems: ["bongsa", "shung"] },
+  { id: 9, name: "중앙도서관", imgPath: "assets/b_library.png", img: null, x: 0.715, y: 0.261, w: 0.182, h: 0.16, dropItems: ["bongsa", "shung"] },
+  { id: 11, name: "전산관", imgPath: "assets/b_computer.png", img: null, x: 0.811, y: 0.508, w: 0.176, h: 0.1, dropItems: ["bongsa", "shung"] },
+  { id: 12, name: "정보섬", imgPath: "assets/b_infosum.png", img: null, x: 0.687, y: 0.749, w: 0.228, h: 0.2, dropItems: ["bongsa", "shung"] },
+  { id: 13, name: "경상관", imgPath: "assets/b_kyungsang.png", img: null, x: 0.072, y: 0.491, w: 0.150, h: 0.12, dropItems: ["bongsa", "shung"] },
 
   // 🥀 [특수 구역] 외곽 및 운동장: 소거법을 위한 목튤립 중심, 그리고 슝슝
-  { id: 3, name: "대운동장", imgPath: "assets/b_stadium.png", img: null, x: 0.2, y: 0.2, w: 0.2, h: 0.23, dropItems: ["tulip", "shung"] },
-  { id: 15, name: "백마관", imgPath: "assets/b_baekma.png", img: null, x: 0.24, y: 0.1, w: 0.16, h: 0.08, dropItems: ["tulip", "shung"] },
+  { id: 3, name: "대운동장", imgPath: "assets/b_stadium.png", img: null, x: 0.107, y: 0.239, w: 0.221, h: 0.23, dropItems: ["tulip", "shung"] },
+  { id: 15, name: "백마관", imgPath: "assets/b_baekma.png", img: null, x: 0.073, y: 0.087, w: 0.160, h: 0.08, dropItems: ["tulip", "shung"] },
 
   // 학생회관 (스마트폰 진입 전용)
-  { id: 7, name: "학생회관", imgPath: "assets/b_student.png", img: null, x: 0.41, y: 0.22, w: 0.07, h: 0.2, dropItems: [] }
+  { id: 7, name: "학생회관", imgPath: "assets/b_student.png", img: null, x: 0.342, y: 0.278, w: 0.160, h: 0.2, dropItems: [] }
 ];
 
 function buildDropProbabilities(items) {

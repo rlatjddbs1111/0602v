@@ -10,8 +10,10 @@ const HINT_CONFIG = {
 };
 
 function guessWordAction() {
-  // 💡 폰 화면일 때만 실행 (클릭 연타로 인한 이중 제출 차단)
   if (gameState.activeView !== "phone") return;
+  
+  // 💡 정답을 맞추고 화면 전환을 기다리는 1초 동안에는 버튼 연타 차단!
+  if (gameState.winDelayTimer > 0) return; 
 
   let val = inputField.value().trim();
   
@@ -78,12 +80,13 @@ function calculateHints(guess, answer) {
 function applyGuessResult(guess, hint_types) {
   if (hint_types[0] === "jinri" && hint_types[1] === "jinri") {
     gameState.gameWon = true;
-    gameState.activeView = "gameWin";
     gameState.winStreak += 1;
     gameState.history.push({ guess: guess, hint: ["jinri", "jinri"] });
     
-    gameState.overlayTimer = 45; // 💡 승리 화면이 뜨자마자 더블클릭으로 넘어가는 것 방지 (0.75초)
-    if (typeof updateDOMVisibility === 'function') updateDOMVisibility(); 
+    // 💡 기존의 즉시 화면 전환 로직을 없애고 1초(60프레임) 타이머 시작
+    gameState.winDelayTimer = 60; 
+    
+    if (inputField) inputField.value("");
     saveGameProgress(); 
     return;
   }
@@ -116,7 +119,6 @@ function applyGuessResult(guess, hint_types) {
 }
 
 function tutorialGuessAction() {
-  // 💡 연습 모드가 아니면 차단 (더블클릭 방지)
   if (gameState.activeView !== "tutorial" || gameState.tutorialStep !== 4) return;
 
   if (!tutorialInput) return;

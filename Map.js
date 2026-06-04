@@ -1,6 +1,5 @@
 // 파일명: Map.js
 
-// 💡 건물 배치가 끝났다면 여기를 false로 바꾸세요! 그래야 미니게임 클릭이 작동합니다.
 let debugMode = false; 
 let draggedBuilding = null; 
 
@@ -8,10 +7,9 @@ function drawMapScreen() {
     drawCollectionBox(width - 200, 80);
 
     for (let b of buildings) {
-        // 💡 찌그러짐 방지 마법: 이미지가 있으면 원본 비율(Aspect Ratio)에 맞춰 높이를 자동 계산!
-        if (b.img && b.img.width > 0) { 
+        if (b.img && b.img.width > 1) { 
             let aspect = b.img.height / b.img.width;
-            b.h = (b.w * width * aspect) / height; // Main.js의 h값을 원본 비율로 덮어씌움
+            b.h = (b.w * width * aspect) / height; 
         }
 
         let bX = width * b.x;
@@ -19,19 +17,51 @@ function drawMapScreen() {
         let bW = width * b.w;
         let bH = height * b.h;
 
-        if (b.img) {
+        // --- 💡 학생회관(id: 7) 전용 특수 빛 효과 (크기 대폭 확대) ---
+        if (b.id === 7) {
+            // 기본 크기(35)와 박동 진폭(25)을 키워 훨씬 더 크게 퍼지도록 설정
+            let glowIntensity = 35 + sin(frameCount * 0.05) * 25;
+            drawingContext.shadowBlur = glowIntensity;
+            drawingContext.shadowColor = 'rgba(255, 215, 0, 1.0)'; // 색상도 100% 진하게 변경
+        }
+
+        if (b.img && b.img.width > 1) {
             image(b.img, bX, bY, bW, bH);
         } else {
             fill(150, 150); stroke(100);
             rect(bX, bY, bW, bH);
         }
 
+        // --- 💡 다른 건물이나 텍스트에 빛이 번지지 않도록 즉시 초기화 ---
+        if (b.id === 7) {
+            drawingContext.shadowBlur = 0;
+        }
+
+        // --- 라벨 자동 생성 로직 ---
+        let labelX = bX + bW / 2;       
+        let labelY = bY + bH * 0.75;    
+
+        textSize(14);
+        textStyle(BOLD); 
+        
+        let tWidth = textWidth(b.name); 
+        let paddingX = 20;              
+        let paddingY = 24;              
+
+        fill(0, 180); 
+        noStroke();
+        rect(labelX - (tWidth + paddingX) / 2, labelY - paddingY / 2, tWidth + paddingX, paddingY, 3);
+
+        fill(255); 
+        textAlign(CENTER, CENTER);
+        text(b.name, labelX, labelY);
+        
+        textStyle(NORMAL); 
+        // -----------------------------------------
+
         if (debugMode) {
             stroke(255, 0, 0); noFill();
-            rect(bX, bY, bW, bH); // 빨간 히트박스도 찌그러짐 없이 딱 맞게 표시됨
-            
-            fill(0); noStroke(); textAlign(CENTER, CENTER); textSize(14);
-            text(b.name, bX + bW / 2, bY + bH / 2);
+            rect(bX, bY, bW, bH); 
         }
     }
 }
@@ -49,7 +79,6 @@ function handleMapClick(mx, my) {
     return; 
   }
 
-  // 디버그 모드일 때는 클릭을 '드래그'로 인식하고 미니게임 진입을 차단합니다.
   if (debugMode) {
     for (let b of buildings) {
       if (mx > width * b.x && mx < width * b.x + width * b.w && 
@@ -60,7 +89,6 @@ function handleMapClick(mx, my) {
     }
   }
 
-  // 디버그 모드가 아닐 때(false)만 미니게임으로 넘어갑니다.
   for (let b of buildings) {
     if (mx > width * b.x && mx < width * b.x + width * b.w && 
         my > height * b.y && my < height * b.y + height * b.h && b.id !== 7) {
@@ -88,9 +116,29 @@ function mapMouseDragged() {
 
 function mapMouseReleased() {
   if (draggedBuilding) {
-    console.log(`[${draggedBuilding.name}] 새 좌표 복사하기 👉  x: ${draggedBuilding.x.toFixed(3)}, y: ${draggedBuilding.y.toFixed(3)}`);
+    console.log(`[${draggedBuilding.name}] 📍 새 좌표 복사 👉 x: ${draggedBuilding.x.toFixed(3)}, y: ${draggedBuilding.y.toFixed(3)}, w: ${draggedBuilding.w.toFixed(3)}`);
     draggedBuilding = null;
   }
+}
+
+function mapMouseWheel(event) {
+  if (!debugMode || gameState.activeView !== "map") return true;
+
+  for (let b of buildings) {
+    if (mouseX > width * b.x && mouseX < width * b.x + width * b.w &&
+        mouseY > height * b.y && mouseY < height * b.y + height * b.h) {
+      
+      if (event.delta > 0) {
+        b.w *= 0.95; 
+      } else {
+        b.w *= 1.05; 
+      }
+
+      console.log(`[${b.name}] 📐 새 크기 복사 👉 w: ${b.w.toFixed(3)} (x: ${b.x.toFixed(3)}, y: ${b.y.toFixed(3)})`);
+      return false; 
+    }
+  }
+  return true;
 }
 
 function drawExplorationOverlay() {

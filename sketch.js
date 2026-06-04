@@ -8,19 +8,17 @@ let tutorialInput, tutorialSubmitBtn;
 
 let imgJinri, imgShung;
 let imgBaekma, imgSoongsil, imgBongsa, imgTulip; 
-// 💡 imgMap 변수 삭제됨
 
 function preload() {
   imgJinri = loadImage('ImgJinri.png');
   imgShung = loadImage('ImgShung.png');
-  
-  // 💡 배경 이미지 로드 부분 삭제됨
   
   imgBaekma = loadImage('ImgBaekma.png');
   imgSoongsil = loadImage('ImgSoongsil.png');
   imgBongsa = loadImage('ImgBongsa.png');
   imgTulip = loadImage('ImgTulip.png');
 
+  // 💡 제 실수로 누락되었던 핵심 코드 복구 완료!
   for (let b of buildings) {
     if (b.imgPath) {
       b.img = loadImage(b.imgPath);
@@ -68,8 +66,19 @@ function setup() {
 }
 
 function draw() {
-  background(240); // 💡 이 부분이 맵의 기본 백지(밝은 회색) 배경이 됩니다!
+  background(240);
   drawGlobalHeader();
+
+  // 💡 정답 화면 전환 딜레이 로직 (1초 후 팝업 띄우기)
+  if (gameState.winDelayTimer > 0) {
+    gameState.winDelayTimer--;
+    if (gameState.winDelayTimer <= 0) {
+      gameState.activeView = "gameWin";
+      gameState.overlayTimer = 45; 
+      if (typeof updateDOMVisibility === 'function') updateDOMVisibility();
+      saveGameProgress();
+    }
+  }
 
   let bgView = gameState.activeView;
   if (bgView === "gameWin" || bgView === "gameOver") {
@@ -111,7 +120,9 @@ function drawGlobalHeader() {
 }
 
 function mousePressed() {
-  if (gameState.isExploring || gameState.explorationResultLabel) return; 
+  if (gameState.isExploring) return; 
+
+  if (gameState.winDelayTimer > 0) return; 
 
   if (gameState.activeView === "gameWin") {
     handleWinClick(mouseX, mouseY);
@@ -131,28 +142,20 @@ function mousePressed() {
 }
 
 function keyPressed() {
-  if (key === ' ' || keyCode === 32) {
-    if (gameState.isExploring && !gameState.explorationPressed) {
-      gameState.explorationPressed = true;
-      let pos = gameState.explorationBarPos; 
-      let tStart = gameState.explorationTargetStart;
-      let tW = gameState.explorationTargetWidth;
-      
-      let accuracy = 0;
-      if (pos >= tStart && pos <= tStart + tW) accuracy = 1.0; 
-      else accuracy = 0;   
-      
-      gameState.explorationResult = accuracy;
-      gameState.isExploring = false;
-      executeExploreLogic(gameState.pendingBuildingId, accuracy);
-    }
+  if (gameState.isExploring && !gameState.explorationPressed && (key === ' ' || keyCode === 32)) {
+    gameState.explorationPressed = true;
+    let pos = gameState.explorationBarPos; 
+    let tStart = gameState.explorationTargetStart;
+    let tW = gameState.explorationTargetWidth;
+    
+    let accuracy = 0;
+    if (pos >= tStart && pos <= tStart + tW) accuracy = 1.0; 
+    else accuracy = 0;   
+    
+    gameState.explorationResult = accuracy;
+    gameState.isExploring = false;
+    executeExploreLogic(gameState.pendingBuildingId, accuracy);
+    
     return false; 
   }
-}
-
-function mouseDragged() {
-  if (typeof mapMouseDragged === 'function') mapMouseDragged();
-}
-function mouseReleased() {
-  if (typeof mapMouseReleased === 'function') mapMouseReleased();
 }
