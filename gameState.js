@@ -33,7 +33,10 @@ let gameState = {
   
   tutorialStep: 0, 
   tutorialHistory: [], 
-  previousView: null   
+  previousView: null,
+  
+  // 💡 화면 전환 직후 더블클릭/스킵을 방지하기 위한 쿨다운 타이머
+  overlayTimer: 0 
 };
 
 const STAGE_ANSWERS = {

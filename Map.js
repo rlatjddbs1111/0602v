@@ -1,25 +1,37 @@
 // 파일명: Map.js
 
-// 위치를 맞출 때는 true로 켜고, 좌표 수정이 끝나면 false로 바꾸세요!
-let debugMode = true; 
+// 💡 건물 배치가 끝났다면 여기를 false로 바꾸세요! 그래야 미니게임 클릭이 작동합니다.
+let debugMode = false; 
+let draggedBuilding = null; 
 
 function drawMapScreen() {
-    if (imgMap) {
-        image(imgMap, 0, 0, width, height);
-    } else {
-        background(200); 
-    }
-
     drawCollectionBox(width - 200, 80);
 
-    if (debugMode) {
-        for (let b of buildings) {
-            fill(255, 0, 0, 100); 
-            stroke(255, 0, 0);
-            rect(width * b.x, height * b.y, width * b.w, height * b.h);
+    for (let b of buildings) {
+        // 💡 찌그러짐 방지 마법: 이미지가 있으면 원본 비율(Aspect Ratio)에 맞춰 높이를 자동 계산!
+        if (b.img && b.img.width > 0) { 
+            let aspect = b.img.height / b.img.width;
+            b.h = (b.w * width * aspect) / height; // Main.js의 h값을 원본 비율로 덮어씌움
+        }
+
+        let bX = width * b.x;
+        let bY = height * b.y;
+        let bW = width * b.w;
+        let bH = height * b.h;
+
+        if (b.img) {
+            image(b.img, bX, bY, bW, bH);
+        } else {
+            fill(150, 150); stroke(100);
+            rect(bX, bY, bW, bH);
+        }
+
+        if (debugMode) {
+            stroke(255, 0, 0); noFill();
+            rect(bX, bY, bW, bH); // 빨간 히트박스도 찌그러짐 없이 딱 맞게 표시됨
             
             fill(0); noStroke(); textAlign(CENTER, CENTER); textSize(14);
-            text(b.name, width * b.x + width * b.w / 2, height * b.y + height * b.h / 2);
+            text(b.name, bX + bW / 2, bY + bH / 2);
         }
     }
 }
@@ -37,6 +49,18 @@ function handleMapClick(mx, my) {
     return; 
   }
 
+  // 디버그 모드일 때는 클릭을 '드래그'로 인식하고 미니게임 진입을 차단합니다.
+  if (debugMode) {
+    for (let b of buildings) {
+      if (mx > width * b.x && mx < width * b.x + width * b.w && 
+          my > height * b.y && my < height * b.y + height * b.h) {
+        draggedBuilding = b;
+        return; 
+      }
+    }
+  }
+
+  // 디버그 모드가 아닐 때(false)만 미니게임으로 넘어갑니다.
   for (let b of buildings) {
     if (mx > width * b.x && mx < width * b.x + width * b.w && 
         my > height * b.y && my < height * b.y + height * b.h && b.id !== 7) {
@@ -45,12 +69,27 @@ function handleMapClick(mx, my) {
     }
   }
 
-  // 💡 수정된 부분: 배열 순서가 아니라 고유 id(7)로 학생회관을 찾아냅니다!
   let studentUnion = buildings.find(b => b.id === 7);
   if (studentUnion && mx > width * studentUnion.x && mx < width * studentUnion.x + width * studentUnion.w && 
       my > height * studentUnion.y && my < height * studentUnion.y + height * studentUnion.h) {
     gameState.activeView = "phone"; 
     if (typeof updateDOMVisibility === 'function') updateDOMVisibility();
+  }
+}
+
+function mapMouseDragged() {
+  if (!debugMode || gameState.activeView !== "map") return;
+
+  if (draggedBuilding) {
+    draggedBuilding.x = mouseX / width;
+    draggedBuilding.y = mouseY / height;
+  }
+}
+
+function mapMouseReleased() {
+  if (draggedBuilding) {
+    console.log(`[${draggedBuilding.name}] 새 좌표 복사하기 👉  x: ${draggedBuilding.x.toFixed(3)}, y: ${draggedBuilding.y.toFixed(3)}`);
+    draggedBuilding = null;
   }
 }
 

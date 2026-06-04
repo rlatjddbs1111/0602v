@@ -36,7 +36,6 @@ function updateDOMVisibility() {
     if (inputField && submitBtn) { inputField.show(); submitBtn.show(); }
     if (typeof tutorialInput !== 'undefined' && tutorialInput) { tutorialInput.hide(); tutorialSubmitBtn.hide(); }
   } 
-  // 💡 연습모드 진입 시점이 5페이지(인덱스 4)로 변경되었습니다.
   else if (gameState.activeView === "tutorial" && gameState.tutorialStep === 4) {
     if (inputField && submitBtn) { inputField.hide(); submitBtn.hide(); }
     
@@ -51,6 +50,7 @@ function updateDOMVisibility() {
     }
   } 
   else {
+    // gameWin, gameOver 상태일 때도 여기서 깔끔하게 입력창을 가려줍니다.
     if (inputField && submitBtn) { inputField.hide(); submitBtn.hide(); }
     if (typeof tutorialInput !== 'undefined' && tutorialInput) { tutorialInput.hide(); tutorialSubmitBtn.hide(); }
   }
@@ -80,7 +80,7 @@ function drawInGamePopup() {
 }
 
 function drawGameOverOverlay() {
-  fill(0, 150); rect(0, 0, width, height);
+  fill(0, 150); rect(0, 0, width, height); // 뒷배경을 어둡게 눌러줌
   let boxW = UI_CONFIG.GAME_OVER.w;
   let boxH = UI_CONFIG.GAME_OVER.h;
   fill(255); rect(width / 2 - boxW/2, height / 2 - boxH/2 + 10, boxW, boxH, 15);
@@ -93,10 +93,8 @@ function drawGameOverOverlay() {
   fill(200, 50, 50);
   text("연승이 초기화되었습니다. 😭", width / 2, height / 2 + 30);
   
-  gameState.winStreak = 0; 
   fill(50);
   text("클릭하여 다시 시작", width / 2, height / 2 + 55);
-  saveGameProgress(); 
 }
 
 function handleGameOverClick(mx, my) {
@@ -109,13 +107,12 @@ function handleGameOverClick(mx, my) {
 }
 
 function drawGameWinOverlay() {
-  fill(0, 150); rect(0, 0, width, height);
+  fill(0, 150); rect(0, 0, width, height); // 뒷배경을 어둡게 눌러줌
   let boxW = UI_CONFIG.GAME_WIN.w;
   let boxH = UI_CONFIG.GAME_WIN.h;
   fill(255); rect(width / 2 - boxW/2, height / 2 - boxH/2, boxW, boxH, 15);
   fill(50); textAlign(CENTER, CENTER);
   
-  if (typeof updateDOMVisibility === 'function') updateDOMVisibility(); 
   if (gameState.stage < 2) {
     textSize(24); text(`Stage ${gameState.stage} 성공!`, width / 2, height / 2 - 40);
     textSize(18); fill(0, 150, 50);
