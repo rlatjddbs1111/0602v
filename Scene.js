@@ -5,7 +5,7 @@ function resetGame() {
     gameState.turns = currentMaxTurns; 
     gameState.stage = 1;
     currentAnswer = STAGE_ANSWERS[1];
-    gameState.inventory = { baekma: 0, soongsil: 0, shung: 1, bongsa: 3, tulip: 1 };
+    gameState.inventory = { baekma: 0, soongsil: 0, shung: 0, bongsa: 0, tulip: 0 };
     gameState.history = [];
     gameState.gameWon = false;
     gameState.activeView = "map"; 
@@ -50,7 +50,6 @@ function updateDOMVisibility() {
     }
   } 
   else {
-    // gameWin, gameOver 상태일 때도 여기서 깔끔하게 입력창을 가려줍니다.
     if (inputField && submitBtn) { inputField.hide(); submitBtn.hide(); }
     if (typeof tutorialInput !== 'undefined' && tutorialInput) { tutorialInput.hide(); tutorialSubmitBtn.hide(); }
   }
@@ -80,20 +79,18 @@ function drawInGamePopup() {
 }
 
 function drawGameOverOverlay() {
-  fill(0, 150); rect(0, 0, width, height); // 뒷배경을 어둡게 눌러줌
+  fill(0, 150); rect(0, 0, width, height); 
   let boxW = UI_CONFIG.GAME_OVER.w;
   let boxH = UI_CONFIG.GAME_OVER.h;
   fill(255); rect(width / 2 - boxW/2, height / 2 - boxH/2 + 10, boxW, boxH, 15);
   
-  fill(50); textAlign(CENTER, CENTER); textSize(24);
-  text("도전 실패...", width / 2, height / 2 - 30);
+  fill(50); textAlign(CENTER, CENTER); textSize(26);
+  text("도전 실패...", width / 2, height / 2 - 20);
   
-  textSize(16); 
-  text(`정답: ${currentAnswer}`, width / 2, height / 2 + 5);
-  fill(200, 50, 50);
-  text("연승이 초기화되었습니다. 😭", width / 2, height / 2 + 30);
+  textSize(18); fill(200, 50, 50);
+  text(`정답: ${currentAnswer}`, width / 2, height / 2 + 15);
   
-  fill(50);
+  fill(50); textSize(16);
   text("클릭하여 다시 시작", width / 2, height / 2 + 55);
 }
 
@@ -107,30 +104,29 @@ function handleGameOverClick(mx, my) {
 }
 
 function drawGameWinOverlay() {
-  fill(0, 150); rect(0, 0, width, height); // 뒷배경을 어둡게 눌러줌
+  fill(0, 150); rect(0, 0, width, height); 
   let boxW = UI_CONFIG.GAME_WIN.w;
   let boxH = UI_CONFIG.GAME_WIN.h;
   fill(255); rect(width / 2 - boxW/2, height / 2 - boxH/2, boxW, boxH, 15);
   fill(50); textAlign(CENTER, CENTER);
   
   if (gameState.stage < 2) {
-    textSize(24); text(`Stage ${gameState.stage} 성공!`, width / 2, height / 2 - 40);
-    textSize(18); fill(0, 150, 50);
-    text(`현재 🔥 ${gameState.winStreak} 연승 중!`, width / 2, height / 2 - 5);
-    textSize(16); fill(50);
+    textSize(26); text(`Stage ${gameState.stage} 성공!`, width / 2, height / 2 - 20);
+    textSize(18); fill(50);
     text("다음 스테이지로 나아가려면 클릭하세요.", width / 2, height / 2 + 30);
   } else {
-    textSize(26); fill(0, 102, 204);
-    text("🎉 모든 진리 수집 성공! 🎉", width / 2, height / 2 - 70);
-    textSize(18); fill(0, 150, 50);
-    text(`최종 기록: ✨ ${gameState.winStreak} 연승!`, width / 2, height / 2 - 35);
-    fill(50); textSize(14);
-    text("소속: 글로벌미디어학부", width / 2, height / 2 + 5);
-    text("제작자: 이준배, 김성윤", width / 2, height / 2 + 25);
-    textSize(12);
+    textSize(28); fill(0, 102, 204);
+    text("🎉 모든 진리 수집 성공! 🎉", width / 2, height / 2 - 60);
+    
+    fill(50); textSize(16);
+    text("소속: 글로벌미디어학부", width / 2, height / 2 - 10);
+    text("제작자: 이준배, 김성윤", width / 2, height / 2 + 15);
+    
+    textSize(13);
     text('"숭실의 자음과 모음을 모아 진리를 찾는\n여정을 게임으로 구현하게 되어 뜻깊었습니다!"', width / 2, height / 2 + 65);
-    textSize(14); fill(100);
-    text("클릭하여 처음부터 다시 시작", width / 2, height / 2 + 110);
+    
+    textSize(15); fill(100);
+    text("클릭하여 처음부터 다시 시작", width / 2, height / 2 + 115);
   }
 }
 
@@ -139,7 +135,14 @@ function handleWinClick(mx, my) {
   let boxH = UI_CONFIG.GAME_WIN.h;
   if(mx > width / 2 - boxW/2 && mx < width / 2 + boxW/2 && 
      my > height / 2 - boxH/2 && my < height / 2 + boxH/2) {
-    if (gameState.stage < 2) nextStage();
-    else resetGame();
+    if (gameState.stage < 2) {
+        nextStage();
+    } else {
+        // 💡 게임 변수 초기화 후 곧바로 메인 타이틀 화면으로 덮어씌움
+        resetGame();
+        gameState.activeView = "title";
+        if (typeof updateDOMVisibility === 'function') updateDOMVisibility();
+        saveGameProgress();
+    }
   }
 }

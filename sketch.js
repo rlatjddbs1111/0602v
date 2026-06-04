@@ -18,7 +18,6 @@ function preload() {
   imgBongsa = loadImage('ImgBongsa.png');
   imgTulip = loadImage('ImgTulip.png');
 
-  // 💡 제 실수로 누락되었던 핵심 코드 복구 완료!
   for (let b of buildings) {
     if (b.imgPath) {
       b.img = loadImage(b.imgPath);
@@ -69,7 +68,6 @@ function draw() {
   background(240);
   drawGlobalHeader();
 
-  // 💡 정답 화면 전환 딜레이 로직 (1초 후 팝업 띄우기)
   if (gameState.winDelayTimer > 0) {
     gameState.winDelayTimer--;
     if (gameState.winDelayTimer <= 0) {
@@ -108,11 +106,7 @@ function drawGlobalHeader() {
   fill(255); textSize(22); textAlign(LEFT, CENTER);
   text(`숭실 단어 탐험 (Stage ${gameState.stage})`, 20, 30);
   
-  textAlign(CENTER, CENTER);
-  textSize(18);
-  if (gameState.winStreak > 0) {
-    text(`🔥 ${gameState.winStreak} 연승 중`, width / 2, 30);
-  }
+  // 💡 연승 표시 텍스트 완전 제거
   
   textAlign(RIGHT, CENTER);
   textSize(22);
