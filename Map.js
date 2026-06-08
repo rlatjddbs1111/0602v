@@ -1,4 +1,7 @@
 // 파일명: Map.js
+// [AI 활용 - 특정 문법 보조]
+// drawingContext.shadowBlur와 sin(frameCount)를 결합하여 심장 박동처럼 빛이 깜빡이는 수학적 애니메이션 기법은 AI의 조언을 활용함.
+// 그 외 건물의 배치, 라벨링, 이미지 렌더링은 모두 직접 구현함.
 
 let debugMode = false; 
 let draggedBuilding = null; 

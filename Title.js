@@ -93,19 +93,19 @@ function drawTutorialScreen() {
     text("진리 : 정답과 위치/글자가 완벽히 일치!", boxX + 90, sy + 2); sy += 48;
 
     if (imgBaekma) image(imgBaekma, boxX + 45, sy - 4, iconS, iconS); else text("🐴", boxX + 45, sy);
-    text("백마 : '초성'이 맞고, 제자리 자/모가 2개 이상 일치", boxX + 90, sy + 2); sy += 48;
+    text("백마 : '초성'이 맞고, 제자리 자음,모음이 2개 이상 일치", boxX + 90, sy + 2); sy += 48;
 
     if (imgSoongsil) image(imgSoongsil, boxX + 45, sy - 4, iconS, iconS); else text("🏫", boxX + 45, sy);
-    text("숭실 : '초성'은 틀리지만, 제자리 자/모가 2개 이상 일치", boxX + 90, sy + 2); sy += 48;
+    text("숭실 : '초성'은 틀리지만, 제자리 자음,모음이 2개 이상 일치", boxX + 90, sy + 2); sy += 48;
 
     if (imgBongsa) image(imgBongsa, boxX + 45, sy - 4, iconS, iconS); else text("🤝", boxX + 45, sy);
-    text("봉사 : 제자리 정답과 자/모가 딱 1개만 일치", boxX + 90, sy + 2); sy += 48;
+    text("봉사 : 제자리 정답과 자음,모음이 딱 1개만 일치", boxX + 90, sy + 2); sy += 48;
 
     if (imgShung) image(imgShung, boxX + 45, sy - 4, iconS, iconS); else text("🔄", boxX + 45, sy);
     text("슝슝 : 제자리엔 없지만, '다른 자리' 정답에 포함됨", boxX + 90, sy + 2); sy += 48;
 
     if (imgTulip) image(imgTulip, boxX + 45, sy - 4, iconS, iconS); else text("🥀", boxX + 45, sy);
-    text("목튤립 : 두 글자 어디에도 일치하는 자/모가 전혀 없음", boxX + 90, sy + 2); sy += 48;
+    text("목튤립 : 두 글자 어디에도 일치하는 자음,모음이 전혀 없음", boxX + 90, sy + 2); sy += 48;
   } 
   else if (gameState.tutorialStep === 3) {
     text("4단계 : 심화 규칙 및 예시 모음", width / 2, boxY + 90);

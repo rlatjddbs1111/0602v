@@ -1,4 +1,7 @@
 // 파일명: gameState.js
+// [AI 활용 - 문법 템플릿]
+// 브라우저 localStorage에 데이터를 읽고 쓰는 JSON.stringify/parse 직렬화 표준 문법 템플릿은 AI의 제안을 활용함.
+// 저장할 gameState 객체의 프로퍼티 구성과 Object.assign을 활용한 데이터 병합 로직은 직접 설계함.
 
 const UI_CONFIG = {
   PHONE: { w: 280, h: 500, y: 80 },

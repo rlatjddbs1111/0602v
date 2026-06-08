@@ -12,7 +12,7 @@ let imgBaekma, imgSoongsil, imgBongsa, imgTulip;
 function preload() {
   imgJinri = loadImage('ImgJinri.png');
   imgShung = loadImage('ImgShung.png');
-  
+
   imgBaekma = loadImage('ImgBaekma.png');
   imgSoongsil = loadImage('ImgSoongsil.png');
   imgBongsa = loadImage('ImgBongsa.png');

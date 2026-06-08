@@ -120,10 +120,10 @@ function drawGameWinOverlay() {
     
     fill(50); textSize(16);
     text("소속: 글로벌미디어학부", width / 2, height / 2 - 10);
-    text("제작자: 이준배, 김성윤", width / 2, height / 2 + 15);
+    text("제작자: 김성윤, 이준배", width / 2, height / 2 + 15);
     
     textSize(13);
-    text('"숭실의 자음과 모음을 모아 진리를 찾는\n여정을 게임으로 구현하게 되어 뜻깊었습니다!"', width / 2, height / 2 + 65);
+    text('"플래이해주셔서 감사합니다."', width / 2, height / 2 + 65);
     
     textSize(15); fill(100);
     text("클릭하여 처음부터 다시 시작", width / 2, height / 2 + 115);
