@@ -114,8 +114,13 @@ function drawGlobalHeader() {
 }
 
 function mousePressed() {
+  // 1. 미니게임 바가 움직이는 탐색 중일 때 클릭 방지 (기존 코드)
   if (gameState.isExploring) return; 
 
+  // 💡 2. 탐색 결과창(검은 화면)이 떠 있는 동안 모든 클릭/터치 방지 (추가된 코드)
+  if (gameState.explorationResultLabel) return; 
+
+  // 3. 정답을 맞추고 엔딩으로 넘어가는 대기 시간 동안 클릭 방지 (기존 코드)
   if (gameState.winDelayTimer > 0) return; 
 
   if (gameState.activeView === "gameWin") {
